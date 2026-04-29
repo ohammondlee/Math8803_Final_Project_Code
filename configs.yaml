@@ -1,0 +1,44 @@
+# General
+
+seed: 42
+device: cpu
+
+# Task related 
+task_mode: ngym      # "ngym" or "sMNIST"
+task: CXT            # "2AF", "DMS", "CXT" (if ngym)
+t_mult: 1            # timing multiplier (ngym)
+
+# Model related
+model: rnn
+hidden_dim: 300
+
+## (CTRNN dynamics, can keep like this since these are always these values in the paper code)
+tau: 100.0
+dt: 100.0
+
+# Training
+batch_size: 32
+momentum: 0.9
+n_iter: 10000
+
+# Experiment
+experiment: rank_sweep   # "rank_sweep" or "spectral_sweep" for currently for rank/spectral radius experiments
+
+# Sweep parameters, i.e. list of parameters to try. LR sweep is always being done here
+lr_list: [0.003]
+rank_list: [1, 3, 10, 30, 100, 300]
+radius_list: [0.5, 1.0, 1.5, 2.0]
+ortho_list: [0.0, 0.01, 0.05, 0.1, 0.25]
+sparse_list: [0.01, 0.05, 0.1, 0.3, 1.0]
+
+# Connectivity parameters, generally don't matter for the experiments since they're set 
+# again in the code, so can be anything here at the moment. 
+connectivity:
+  type: low_rank
+  rank: 10
+  spectral_radius: 1.0
+  base_std: 1.25
+
+sample_size: 10
+
+additional_details: "Testing out config files with new code structure"

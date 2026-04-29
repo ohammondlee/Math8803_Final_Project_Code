@@ -51,18 +51,23 @@ def orthogonal_init(shape, alpha, scale=1.0):
     return scale * (U @ S @ V.T).real
 
 
-def dist_to_orth_init(shape, alpha, target_norm=None):
+def dist_to_orth_init(shape, epsilon, target_norm=None):
     """
-    alpha = 0: Symmetric (Far from orthogonal)
-    alpha = 1: Pure Orthogonal
+    Construct a matrix with controllable distance from orthogonality.
+    epsilon controls deviation from orthogonality
+        0.0 -> perfectly orthogonal (QR)
+        larger -> more random
     """
-    W_sym = np.random.randn(*shape)
-    W_sym = (W_sym + W_sym.T) / 2
     Q, _ = np.linalg.qr(np.random.randn(*shape))
-    W = (1 - alpha) * (W_sym / np.linalg.norm(W_sym)) + alpha * (Q / np.linalg.norm(Q))
+    G = np.random.randn(*shape)
+    G = G / (np.linalg.norm(G) + 1e-12)
+
+    Q_scale = np.linalg.norm(Q)
+    W = Q + epsilon * G * Q_scale
+    
     if target_norm is not None:
-        W = W / np.linalg.norm(W) * target_norm
-        
+        W = W / (np.linalg.norm(W) + 1e-12) * target_norm
+
     return W
 
 def sparse_init(shape, sparsity, target_norm=None):
